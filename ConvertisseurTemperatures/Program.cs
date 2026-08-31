@@ -1,40 +1,35 @@
 ﻿// Converts a temperature between Celsius and Fahrenheit.
 
-double celsius = 0;
-double fahrenheit = 0;
-
-Console.Write("\nChoose a conversion:\n");
-Console.Write("\t\t\t\t\t1. Celsius to Fahrenheit\n");
-Console.WriteLine("\n\t\t\t\t\t2. Fahrenheit to Celsius");
+Console.Write("\nChoose a conversion:\n\t\t\t\t\t1. Celsius to Fahrenheit\n\n\t\t\t\t\t2. Fahrenheit to Celsius\n");
 
 // ReadLine returns null once the input stream is closed, hence the nullable type.
-string? input = Console.ReadLine();
+string? choice = Console.ReadLine();
 
-switch (input)
+if (choice != "1" && choice != "2")
 {
-    case "1":
-        Console.Write("Enter the temperature in Celsius: ");
-
-        // TryParse reports failure through its return value rather than throwing,
-        // so a malformed entry stays an ordinary branch instead of an exception.
-        if (double.TryParse(Console.ReadLine(), out celsius))
-        {
-            fahrenheit = (celsius * 9.0 / 5.0) + 32.0;
-            Console.Write($"\n\n\t\t\t\t{celsius:f1} °C = {fahrenheit:f1} °F");
-        }
-        break;
-
-    case "2":
-        Console.Write("Enter the temperature in Fahrenheit: ");
-
-        if (double.TryParse(Console.ReadLine(), out fahrenheit))
-        {
-            celsius = (fahrenheit - 32.0) * 5.0 / 9.0;
-            Console.Write($"\n\n\t\t\t\t{fahrenheit:f1} °F = {celsius:f1} °C");
-        }
-        break;
-
-    default:
-        Console.Write("\nInvalid choice.\n");
-        break;
+    Console.Write("\nInvalid choice.\n");
+    return;
 }
+
+// Both directions share the same steps, so the choice is kept as a flag and the
+// prompt, the formula and the unit symbols are selected from it rather than
+// written out twice.
+bool toFahrenheit = choice == "1";
+
+Console.Write(toFahrenheit
+    ? "Enter the temperature in Celsius: "
+    : "Enter the temperature in Fahrenheit: ");
+
+// TryParse reports failure through its return value rather than throwing, so a
+// malformed entry stays an ordinary branch instead of an exception to catch.
+if (!double.TryParse(Console.ReadLine(), out double input))
+{
+    Console.Write("\nInvalid temperature.\n");
+    return;
+}
+
+double result = toFahrenheit
+    ? input * 9.0 / 5.0 + 32.0
+    : (input - 32.0) * 5.0 / 9.0;
+
+Console.Write($"\n\n\t\t\t\t{input:f1} {(toFahrenheit ? "°C" : "°F")} = {result:f1} {(toFahrenheit ? "°F" : "°C")}");
